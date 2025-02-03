@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Estacionamiento UNL</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: white; /*url("/static/logo3.png") no-repeat center center fixed;*/
+            background-size: 1500px;
+            margin: 0;
+            padding: 0;
+        }
+        /* Estilo del encabezado (título + logos) */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background: darkslategray;
+        }
+        .logo {
+            width: 150px;
+            height: auto;
+        }
+        .title {
+            flex-grow: 1;
+            text-align: center;
+            font-size: 40px;
+            font-weight: bold;
+            color: azure;
+        }
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            margin-top: 10px;
+        }
+        .content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 50%;
+
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        .counter-container {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        .counter, .free-spaces {
+            font-size: 24px;
+            font-weight: bold;
+            padding: 10px;
+            border-radius: 10px;
+            width: 200px;
+            background: #fff;
+            text-align: center;
+        }
+        .counter {
+            color: red;
+            border: 2px solid red;
+        }
+        .free-spaces {
+            color: darkgreen;
+            border: 2px solid darkgreen;
+        }
+        img.video {
+            width: 640px;
+            height: 480px;
+            border-radius: 10px;
+            border: 2px solid #000;
+        }
+    </style>
+    <script>
+        function actualizarDatos() {
+            fetch('/api/cars')
+                .then(response => response.json())
+                .then(data => {
+                    let totalEspacios = 30; // Total de espacios en el estacionamiento
+                    let autosDetectados = data.car_count;
+                    let espaciosLibres = Math.max(totalEspacios - autosDetectados, 0); // Evitar números negativos
+
+                    document.getElementById('contador').innerText = autosDetectados;
+                    document.getElementById('espaciosLibres').innerText = espaciosLibres;
+                })
+                .catch(error => console.log('Error:', error));
+        }
+        setInterval(actualizarDatos, 5000);
+    </script>
+</head>
+<body>
+
+    <div class="header">
+        <img src="{{ url_for('static', filename='logo1.png') }}" alt="Logo Izquierdo" class="logo">
+        <h1 class="title">UNIVERSIDAD NACIONAL DE LOJA</h1>
+        <img src="{{ url_for('static', filename='logo2.png') }}" alt="Logo Derecho" class="logo">
+    </div>
+
+    <h1 style="color: darkgreen;">Parqueadero de la Facultad de la Energía</h1>
+
+    <div class="container">
+        <div class="content">
+            <div class="counter-container">
+                <div class="counter">
+                    Espacios ocupados: <span id="contador">0</span>
+                </div>
+                <div class="free-spaces">
+                    Espacios disponibles: <span id="espaciosLibres">30</span>
+                </div>
+            </div>
+            <img id="videoFeed" src="/video_feed" alt="Video en vivo" class="video">
+        </div>
+    </div>
+
+</body>
+</html>
